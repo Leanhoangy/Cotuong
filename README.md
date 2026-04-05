@@ -1,28 +1,63 @@
-# Cotuong
+# ♟️ Co Tuong (Chinese Chess)
 
-Đây là dự án về trò chơi cờ tướng được phát triển bởi Leanhoangy.
+A Vietnamese Chinese Chess (Cờ Tướng) game built with Python, designed for players to practice, compete, and learn strategies from beginner to advanced level.
 
-## Giới thiệu
-Dự án này nhằm tạo ra một ứng dụng giúp người chơi cờ tướng có thể thực hành, thi đấu và học hỏi các chiến thuật từ căn bản đến nâng cao. Game được xây dựng để mọi người thuận tiện sử dụng trên môi trường trực tuyến hoặc nội bộ.
+## 🎯 Features
 
-## Tính năng
-- Chơi cờ tướng hai người trên cùng một máy hoặc online
-- Lưu lại lịch sử trận đấu
-- Tính năng undo/red0 khi chơi
-- Hướng dẫn luật chơi, các thế cờ phổ biến
-- Giao diện đơn giản, dễ dùng
+- Two-player mode on the same machine
+- Match history tracking
+- Undo / Redo moves during gameplay
+- Rules guide and popular opening strategies
+- Simple and user-friendly interface
 
-## Công nghệ sử dụng
-- Ngôn ngữ lập trình: (bạn cập nhật phần này, ví dụ: Python, JavaScript, ...)
-- Framework: (bạn cập nhật, ví dụ: React, Django, ...)
+## 🛠️ Technologies Used
 
-## Cách sử dụng
-1. Tải về hoặc clone dự án
-2. (Hướng dẫn cài đặt, chạy project nếu có)
+- **Language:** Python
+- **Framework:** *(update this, e.g. Pygame, Tkinter, Flask...)*
 
-## Đóng góp & Liên hệ
-Nếu bạn muốn đóng góp hoặc có ý kiến, vui lòng tạo issue hoặc liên hệ qua GitHub.
+## ▶️ How to Run
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Leanhoangy/Cotuong.git
+   ```
+
+2. Navigate into the project folder:
+   ```bash
+   cd Cotuong
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the game:
+   ```bash
+   python main.py
+   ```
+
+## 📁 Project Structure
+
+```
+Cotuong/
+├── main.py          # Entry point
+├── game.py          # Core game logic
+├── board.py         # Board and piece logic
+├── requirements.txt # Dependencies
+└── README.md
+```
+
+> *(Update the structure to match your actual files)*
+
+## 🤝 Contributing & Contact
+
+Feel free to open an issue or submit a pull request if you'd like to contribute or have any suggestions. All feedback is welcome!
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-Chúc bạn chơi cờ vui vẻ!
+Happy playing! ♟️
