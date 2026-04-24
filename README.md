@@ -13,7 +13,7 @@ A Vietnamese Chinese Chess (Cờ Tướng) game built with Python, designed for 
 ## 🛠️ Technologies Used
 
 - **Language:** Python
-- **Framework:** *(update this, e.g. Pygame, Tkinter, Flask...)*
+- **Framework:** Pygame
 
 ## ▶️ How to Run
 
