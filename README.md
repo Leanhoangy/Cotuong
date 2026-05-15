@@ -31,7 +31,7 @@ CNN được dùng làm **hàm đánh giá lá** (leaf evaluator) trong cây Min
 
 ### Training Curve
 
-![Training Curve](Cotuong/training_curve.png)
+![Training Curve](training_curve.png)
 
 - **Dataset**: 6,000 thế cờ ngẫu nhiên
 - **Nhãn**: Material score + Piece-Square Tables (PST)
@@ -40,9 +40,11 @@ CNN được dùng làm **hàm đánh giá lá** (leaf evaluator) trong cây Min
 
 ### Benchmark Win-Rate
 
-| Matchup | Kết quả |
-|---------|---------|
-| Random vs CNN+Minimax-1 | Random **0%** — CNN thắng hoàn toàn |
+| Matchup | Bên A | Bên B | Hòa |
+|---------|-------|-------|-----|
+| Random vs CNN+Minimax-1 | Random **0%** | CNN **55%** | 45% |
+| Random vs CNN+Minimax-3 | Random **0%** | CNN **100%** | 0% |
+| CNN+Minimax-1 vs CNN+Minimax-3 | depth=1 **0%** | depth=3 **100%** | 0% |
 
 ---
 
