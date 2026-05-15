@@ -1,6 +1,67 @@
 import random
+import os
+import numpy as np
 
 # =================== HÀM HỖ TRỢ ===================
+
+# 14 loại quân — thứ tự khớp với ml_train.py
+_PIECES = ["帥","将","仕","士","相","象","車","车","馬","马","炮","砲","兵","卒"]
+_PIECE_TO_CH = {p: i for i, p in enumerate(_PIECES)}
+
+_cnn_model = None
+_cnn_loaded = False
+_eval_cache: dict = {}   # transposition table: board_key → score
+
+def _load_cnn():
+    global _cnn_model, _cnn_loaded
+    if _cnn_loaded:
+        return _cnn_model
+    model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model.pt")
+    if os.path.exists(model_path):
+        try:
+            import torch
+            import torch.nn as nn
+
+            class ChessCNN(nn.Module):
+                def __init__(self):
+                    super().__init__()
+                    self.conv = nn.Sequential(
+                        nn.Conv2d(14, 32, kernel_size=3, padding=1),
+                        nn.BatchNorm2d(32), nn.ReLU(),
+                        nn.Conv2d(32, 64, kernel_size=3, padding=1),
+                        nn.BatchNorm2d(64), nn.ReLU(),
+                        nn.Conv2d(64, 64, kernel_size=3, padding=1),
+                        nn.BatchNorm2d(64), nn.ReLU(),
+                    )
+                    self.fc = nn.Sequential(
+                        nn.Flatten(),
+                        nn.Linear(64 * 10 * 9, 128), nn.ReLU(),
+                        nn.Dropout(0.3),
+                        nn.Linear(128, 1),
+                    )
+                def forward(self, x):
+                    return self.fc(self.conv(x)).squeeze(1)
+
+            checkpoint = torch.load(model_path, map_location="cpu", weights_only=False)
+            net = ChessCNN()
+            net.load_state_dict(checkpoint["model_state"])
+            net.eval()
+            _cnn_model = net
+        except Exception:
+            pass
+    _cnn_loaded = True
+    return _cnn_model
+
+def board_to_features(board):
+    """Vector 90 số — dùng cho fallback (giữ tương thích)."""
+    t = np.zeros((1, 14, 10, 9), dtype=np.float32)
+    for r in range(10):
+        for c in range(9):
+            p = board.get(r, c)
+            if p and p in _PIECE_TO_CH:
+                t[0, _PIECE_TO_CH[p], r, c] = 1.0
+    return t
+
 def piece_color(piece):
     red_pieces = {"帥","仕","相","車","馬","炮","兵"}
     black_pieces = {"将","士","象","车","马","砲","卒"}
@@ -13,25 +74,42 @@ def piece_color(piece):
 def opponent(player):
     return "black" if player=="red" else "red"
 
+def _board_key(board):
+    return tuple(board.get(r, c) for r in range(10) for c in range(9))
+
 def evaluate_board(board):
-    """Đơn giản: tổng giá trị quân cờ"""
-    piece_values = {
-        "帥":1000,"将":1000,
-        "仕":20,"士":20,
-        "相":20,"象":20,
-        "車":90,"车":90,
-        "馬":45,"马":45,
-        "炮":50,"砲":50,
-        "兵":10,"卒":10
-    }
-    score = 0
-    for r in range(10):
-        for c in range(9):
-            p = board.get(r, c)
-            if piece_color(p) == "red":
-                score += piece_values.get(p,0)
-            elif piece_color(p) == "black":
-                score -= piece_values.get(p,0)
+    key = _board_key(board)
+    if key in _eval_cache:
+        return _eval_cache[key]
+
+    model = _load_cnn()
+    if model is not None:
+        import torch
+        with torch.no_grad():
+            t = torch.tensor(board_to_features(board))
+            score = float(model(t).item())
+    else:
+        # Fallback khi chưa train CNN
+        piece_values = {
+            "帥":1000,"将":1000,
+            "仕":20,"士":20,
+            "相":20,"象":20,
+            "車":90,"车":90,
+            "馬":45,"马":45,
+            "炮":50,"砲":50,
+            "兵":10,"卒":10
+        }
+        score = 0
+        for r in range(10):
+            for c in range(9):
+                p = board.get(r, c)
+                if piece_color(p) == "red":
+                    score += piece_values.get(p, 0)
+                elif piece_color(p) == "black":
+                    score -= piece_values.get(p, 0)
+
+    if len(_eval_cache) < 200_000:
+        _eval_cache[key] = score
     return score
 
 def get_valid_moves(board, r, c, history=None):
